@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Our Shared Night Sky ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --star-gold: #fffa86; --star-pink: #ffb6c1;
+            --star-aqua: #add8e6; --star-lavender: #e6e6fa;
+            --nebula-pink: rgba(255, 117, 143, 0.2);
+            --nebula-blue: rgba(70, 130, 255, 0.2);
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            overflow: hidden; background: linear-gradient(to bottom, #020107 0%, #050515 100%);
+            font-family: 'Quicksand', sans-serif; color: white; cursor: crosshair;
+        }
+
+        /* Ambient Shooting Star */
+        .shooting-star {
+            position: absolute; width: 2px; height: 2px;
+            background: white; opacity: 0; animation: shoot 5s linear infinite;
+        }
+        @keyframes shoot {
+            0% { transform: translateX(100vw) translateY(0vh) rotate(-45deg); opacity: 1; }
+            20% { transform: translateX(50vw) translateY(50vh) rotate(-45deg); opacity: 0; width: 100px; }
+            100% { transform: translateX(50vw) translateY(50vh) rotate(-45deg); opacity: 0; }
+        }
+
+        .header-container {
+            position: absolute; top: 5%; text-align: center; width: 100%; pointer-events: none; z-index: 100;
+        }
+        h1 { font-family: 'Cedarville Cursive', cursive; font-size: 3.5rem; margin: 0; text-shadow: 0 0 20px white; }
+
+        /* Star & Message Styling */
+        .star-wrapper { position: absolute; width: 20px; height: 20px; z-index: 50; }
+        .star-shape { 
+            width: 100%; height: 100%; 
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 3s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .star-msg {
+            position: absolute; visibility: hidden; opacity: 0;
+            background: rgba(10, 10, 20, 0.9); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 15px;
+            bottom: 35px; width: 180px; text-align: center; left: 50%; transform: translateX(-50%);
+            transition: all 0.3s ease; z-index: 1000;
+        }
+        .star-wrapper:hover .star-msg { visibility: visible; opacity: 1; bottom: 45px; }
+
+        /* Custom Cosmic Menu */
+        .cosmic-menu {
+            position: absolute; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(20px);
+            border-radius: 20px; padding: 25px; display: none; flex-direction: column;
+            gap: 15px; width: 320px; z-index: 2000; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .paper-container { 
+            background-color: #fefbed; filter: url(#paper-tear); transform: rotate(-1deg); overflow: hidden;
+        }
+        .paper-textarea {
+            width: 100%; height: 130px; border: none; outline: none; resize: none;
+            padding: 30px 15px 10px 50px; font-family: 'Cedarville Cursive', cursive;
+            font-size: 1.4rem; line-height: 28px; color: #3b3b3b;
+            background: linear-gradient(90deg, transparent 39px, #ff8a8a 40px, #ff8a8a 41px, transparent 42px),
+                        repeating-linear-gradient(transparent, transparent 27px, #c3e1f0 28px);
+        }
+
+        .color-picker { display: flex; gap: 15px; justify-content: center; }
+        .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .color-option.selected { border-color: white; transform: scale(1.2); }
+        
+        button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Quicksand'; font-weight: 500; }
+        .btn-cast { background: #fffa86; color: #111; }
+
+        .trail { position: absolute; width: 3px; height: 3px; background: white; border-radius: 50%; animation: fade 1s forwards; pointer-events: none; }
+        @keyframes fade { to { opacity: 0; transform: translateY(10px); } }
+    </style>
+</head>
+<body>
+
+    <svg style="display:none;"><defs><filter id="paper-tear"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5"/><feDisplacementMap in="SourceGraphic" scale="4"/></filter></defs></svg>
+
+    <div class="shooting-star" style="top: 15%; left: 85%; animation-delay: 1s;"></div>
+
+    <div class="header-container">
+        <h1>Our Shared Night Sky</h1>
+        <p>Leave a piece of your heart here</p>
+    </div>
+
+    <div id="cosmicMenu" class="cosmic-menu">
+        <input type="text" id="nameInput" placeholder="Your Name" style="padding:10px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; text-align:center;">
+        <div class="color-picker">
+            <div class="color-option selected" data-color="gold" style="background: var(--star-gold)"></div>
+            <div class="color-option" data-color="pink" style="background: var(--star-pink)"></div>
+            <div class="color-option" data-color="aqua" style="background: var(--star-aqua)"></div>
+            <div class="color-option" data-color="lavender" style="background: var(--star-lavender)"></div>
+        </div>
+        <div class="paper-container">
+            <textarea id="wishInput" class="paper-textarea" placeholder="Write a wish..."></textarea>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="btn-cast" id="castBtn">Cast Wish</button>
+            <button id="cancelBtn" style="background:rgba(255,255,255,0.1); color:white;">Cancel</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase Functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Your unique Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3tqy5HFi83-G7xZduRdSc17fHXfE8y7I",
+            authDomain: "my-nightsky.firebaseapp.com",
+            projectId: "my-nightsky",
+            storageBucket: "my-nightsky.firebasestorage.app",
+            messagingSenderId: "687244007512",
+            appId: "1:687244007512:web:acb239f335325be5a3122d",
+            measurementId: "G-XQDPLK8MST"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const starsRef = ref(db, 'stars');
+
+        const menu = document.getElementById('cosmicMenu');
+        const nameInput = document.getElementById('nameInput');
+        const wishInput = document.getElementById('wishInput');
+        let currentX, currentY;
+
+        // --- 1. Pull stars from the cloud ---
+        onChildAdded(starsRef, (snapshot) => {
+            const data = snapshot.val();
+            renderStar(data.x, data.y, data.name, data.wish, data.color);
+        });
+
+        function renderStar(x, y, name, wish, color) {
+            const wrap = document.createElement('div');
+            wrap.className = 'star-wrapper';
+            wrap.style.left = x + 'px'; wrap.style.top = y + 'px';
+
+            const star = document.createElement('div');
+            star.className = 'star-shape';
+            star.style.backgroundColor = color;
+            star.style.boxShadow = `0 0 15px ${color}`;
+
+            const msg = document.createElement('div');
+            msg.className = 'star-msg';
+            msg.innerHTML = `<b style="font-family:'Cedarville Cursive'; color:${color}; font-size:1.2rem">${name}</b><br><i>${wish}</i>`;
+
+            wrap.appendChild(star); wrap.appendChild(msg);
+            document.body.appendChild(wrap);
+        }
+
+        // --- 2. Push stars to the cloud ---
+        document.getElementById('castBtn').addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            const wish = wishInput.value.trim();
+            const colorKey = document.querySelector('.color-option.selected').dataset.color;
+            const color = getComputedStyle(document.documentElement).getPropertyValue(`--star-${colorKey}`).trim();
+
+            if (name && wish) {
+                push(starsRef, {
+                    name: name,
+                    wish: wish,
+                    color: color,
+                    x: currentX,
+                    y: currentY
+                });
+                menu.style.display = 'none';
+            } else {
+                alert("Please fill in both name and wish!");
+            }
+        });
+
+        // --- 3. UI Interactions ---
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.cosmic-menu') || e.target.closest('.star-wrapper')) return;
+            currentX = e.clientX; currentY = e.clientY;
+            menu.style.display = 'flex';
+            menu.style.left = `${Math.min(e.clientX, window.innerWidth - 350)}px`;
+            menu.style.top = `${Math.min(e.clientY, window.innerHeight - 400)}px`;
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', () => menu.style.display = 'none');
+        
+        document.querySelectorAll('.color-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.8) {
+                const t = document.createElement('div');
+                t.className = 'trail';
+                t.style.left = e.clientX + 'px'; t.style.top = e.clientY + 'px';
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>
